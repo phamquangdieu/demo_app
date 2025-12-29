@@ -9,9 +9,12 @@ class DioClient {
     ),
   );
 
-  Future<Response> get(String path) async {
+  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
     try {
-      final response = await apiClient.get(path);
+      final response = await apiClient.get(
+        path,
+        queryParameters: queryParameters,
+      );
       return response;
     } catch (e) {
       rethrow;
