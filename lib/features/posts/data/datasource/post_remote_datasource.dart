@@ -3,6 +3,7 @@ import 'package:demo_app/features/posts/data/models/post_model.dart';
 
 abstract class PostRemoteDataSource {
   Future<List<PostModel>> getPosts();
+  Future<List<PostModel>> getPostsByUserId(int userId);
 }
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
@@ -18,6 +19,17 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       // queryParameters: {'_limit': _defaultLimit},
     );
 
+    return (response.data as List)
+        .map((json) => PostModel.fromJson(json))
+        .toList();
+  }
+
+  @override
+  Future<List<PostModel>> getPostsByUserId(int userId) async {
+    final response = await dioClient.get(
+      '/posts',
+      queryParameters: {'userId': userId},
+    );
     return (response.data as List)
         .map((json) => PostModel.fromJson(json))
         .toList();

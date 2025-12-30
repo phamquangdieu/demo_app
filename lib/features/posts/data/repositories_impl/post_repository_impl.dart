@@ -10,6 +10,12 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<List<Post>> getListPosts() async {
     final postModels = await remoteDataSource.getPosts();
-    return postModels.map((model) => model.toEntity()).take(20).toList();
+    return postModels.map((model) => model.toEntity()).toList();
+  }
+
+  @override
+  Future<List<Post>> getPostsByUserId(int userId) async {
+    final postModels = await remoteDataSource.getPostsByUserId(userId);
+    return postModels.map((model) => model.toEntity()).toList();
   }
 }

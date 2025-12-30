@@ -1,3 +1,4 @@
+import 'package:demo_app/features/posts/presentation/pages/list_post_page.dart';
 import 'package:demo_app/features/users/presentation/bloc/user_cubit.dart';
 import 'package:demo_app/features/users/presentation/bloc/user_state.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,14 @@ class ListUserPage extends StatelessWidget {
                 final user = state.users[index];
                 return Card(
                   child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ListPostPage(userId: user.id),
+                        ),
+                      );
+                    },
                     title: Text(
                       user.name,
                       style: const TextStyle(

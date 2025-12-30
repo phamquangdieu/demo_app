@@ -3,12 +3,29 @@ import 'package:demo_app/features/posts/presentation/bloc/post_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ListPostPage extends StatelessWidget {
-  const ListPostPage({super.key});
+class ListPostPage extends StatefulWidget {
+  const ListPostPage({super.key, this.userId});
+
+  final int? userId;
+
+  @override
+  State<ListPostPage> createState() => _ListPostPageState();
+}
+
+class _ListPostPageState extends State<ListPostPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<PostCubit>().getPosts(userId: widget.userId);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final title = widget.userId == null
+        ? 'Post List'
+        : 'Posts of User ${widget.userId}';
     return Scaffold(
-      appBar: AppBar(title: const Text('Post List')),
+      appBar: AppBar(title: Text(title)),
       body: BlocBuilder<PostCubit, PostsState>(
         builder: (context, state) {
           if (state is PostsLoading) {
@@ -42,7 +59,8 @@ class ListPostPage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<PostCubit>().getPosts(),
+        onPressed: () =>
+            context.read<PostCubit>().getPosts(userId: widget.userId),
         child: const Icon(Icons.refresh),
       ),
     );

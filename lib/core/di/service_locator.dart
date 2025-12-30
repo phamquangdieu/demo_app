@@ -3,6 +3,7 @@ import 'package:demo_app/features/posts/data/datasource/post_remote_datasource.d
 import 'package:demo_app/features/posts/data/repositories_impl/post_repository_impl.dart';
 import 'package:demo_app/features/posts/domain/repositories/post_repository.dart';
 import 'package:demo_app/features/posts/domain/usecases/get_list_post_usecase.dart';
+import 'package:demo_app/features/posts/domain/usecases/get_post_by_user_usecase.dart';
 import 'package:demo_app/features/posts/presentation/bloc/post_cubit.dart';
 import 'package:demo_app/features/users/data/datasources/user_remote_datasource.dart';
 import 'package:demo_app/features/users/data/repositories_impl/user_repositories_impl.dart';
@@ -32,7 +33,14 @@ void setup() {
 
   sl.registerLazySingleton<PostRepository>(() => PostRepositoryImpl(sl()));
 
-  sl.registerLazySingleton(() => GetListPostUsecase(sl()));
+  sl.registerLazySingleton<GetListPostUsecase>(
+    () => GetListPostUsecase(sl<PostRepository>()),
+  );
+  sl.registerLazySingleton<GetPostByUserUsecase>(
+    () => GetPostByUserUsecase(sl<PostRepository>()),
+  );
 
-  sl.registerFactory(() => PostCubit(sl()));
+  sl.registerFactory<PostCubit>(
+    () => PostCubit(sl<GetListPostUsecase>(), sl<GetPostByUserUsecase>()),
+  );
 }
