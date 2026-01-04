@@ -11,9 +11,35 @@ class UserCubit extends Cubit<UsersState> {
     emit(UsersLoading());
     try {
       final users = await getUsersUseCase();
-      emit(UsersLoaded(users));
+      emit(UsersLoaded(allUsers: users, filteredUsers: users));
     } catch (e) {
       emit(UsersError(e.toString()));
+    }
+  }
+
+  void searchUsers(String keyword) {
+    final currentState = state;
+    if (currentState is UsersLoaded) {
+      if (keyword.isEmpty) {
+        emit(
+          currentState.copyWith(
+            filteredUsers: currentState.allUsers,
+            searchQuery: '',
+          ),
+        );
+        return;
+      }
+      final filteredUsers = currentState.allUsers.where((user) {
+        return user.login.toLowerCase().contains(keyword.toLowerCase());
+      }).toList();
+
+      emit(
+        UsersLoaded(
+          allUsers: currentState.allUsers,
+          filteredUsers: filteredUsers,
+          searchQuery: keyword,
+        ),
+      );
     }
   }
 }

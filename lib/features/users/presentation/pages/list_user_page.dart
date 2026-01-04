@@ -11,49 +11,58 @@ class ListUserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('User List')),
-      body: BlocBuilder<UserCubit, UsersState>(
-        builder: (context, state) {
-          if (state is UsersLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is UsersLoaded) {
-            return ListView.builder(
-              itemCount: state.users.length,
-              itemBuilder: (context, index) {
-                final user = state.users[index];
-                return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ListPostPage(userId: user.id),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: 'Search Users',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (query) {
+                context.read<UserCubit>().searchUsers(query);
+              },
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<UserCubit, UsersState>(
+              builder: (context, state) {
+                if (state is UsersLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is UsersLoaded) {
+                  return ListView.builder(
+                    itemCount: state.filteredUsers.length,
+                    itemBuilder: (context, index) {
+                      final user = state.filteredUsers[index];
+                      return Card(
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(user.avatarUrl),
+                          ),
+                          title: Text('${user.id}. ${user.login}'),
+                          subtitle: Text(user.url),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ListPostPage(userId: user.id),
+                              ),
+                            );
+                          },
                         ),
                       );
                     },
-                    title: Text(
-                      user.login,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    subtitle: Text(
-                      user.url,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ),
-                );
+                  );
+                } else if (state is UsersError) {
+                  return Center(child: Text('Error: ${state.message}'));
+                }
+                return const Center(child: Text('No users found'));
               },
-            );
-          } else if (state is UsersError) {
-            return Center(child: Text('Error: ${state.message}'));
-          }
-          return const Center(child: Text('Press button to load users'));
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<UserCubit>().fetchUsers(),
-        child: const Icon(Icons.refresh),
+            ),
+          ),
+        ],
       ),
     );
   }
