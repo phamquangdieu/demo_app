@@ -10,6 +10,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<List<User>> getUsers() async {
     final users = await userRemoteDataSource.getUsers();
+    print(users.length);
     return users.map((model) => model.toEntity()).toList();
   }
 }

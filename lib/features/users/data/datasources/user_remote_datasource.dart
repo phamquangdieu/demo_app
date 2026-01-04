@@ -12,9 +12,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<UserModel>> getUsers() async {
-    final response = await dioClient.get('/users');
-
-    return (response.data as List)
+    final response = await dioClient.get('/search/users?q=12345');
+    return (response.data['items'] as List)
         .map((json) => UserModel.fromJson(json))
         .toList();
   }

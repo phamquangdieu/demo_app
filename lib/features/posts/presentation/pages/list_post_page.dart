@@ -38,7 +38,7 @@ class _ListPostPageState extends State<ListPostPage> {
                 return Card(
                   child: ListTile(
                     title: Text(
-                      '${index + 1}. ${post.title}',
+                      '${post.id}. ${post.title}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,

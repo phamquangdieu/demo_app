@@ -31,14 +31,14 @@ class ListUserPage extends StatelessWidget {
                       );
                     },
                     title: Text(
-                      user.name,
+                      user.login,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
                       ),
                     ),
                     subtitle: Text(
-                      user.email,
+                      user.url,
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
