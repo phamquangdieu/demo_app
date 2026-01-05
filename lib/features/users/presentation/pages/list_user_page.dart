@@ -1,11 +1,40 @@
+import 'dart:async';
+
 import 'package:demo_app/features/posts/presentation/pages/list_post_page.dart';
 import 'package:demo_app/features/users/presentation/bloc/user_cubit.dart';
 import 'package:demo_app/features/users/presentation/bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ListUserPage extends StatelessWidget {
+class ListUserPage extends StatefulWidget {
   const ListUserPage({super.key});
+  @override
+  State<ListUserPage> createState() => _ListUserPageState();
+}
+
+class _ListUserPageState extends State<ListUserPage> {
+  Timer? _debounceTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserCubit>().fetchUsers({'q': ''});
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      context.read<UserCubit>().fetchUsers(
+        query.isNotEmpty ? {'q': query} : {'q': null},
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +49,7 @@ class ListUserPage extends StatelessWidget {
                 labelText: 'Search Users',
                 border: OutlineInputBorder(),
               ),
-              onChanged: (query) {
-                context.read<UserCubit>().searchUsers(query);
-              },
+              onChanged: _onSearchChanged,
             ),
           ),
           Expanded(
@@ -31,6 +58,24 @@ class ListUserPage extends StatelessWidget {
                 if (state is UsersLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is UsersLoaded) {
+                  if (state.searchQuery.isEmpty) {
+                    return const Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          'Please enter a search query',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    );
+                  } else if (state.filteredUsers.isEmpty) {
+                    return const Center(child: Text('No users found'));
+                  }
                   return ListView.builder(
                     itemCount: state.filteredUsers.length,
                     itemBuilder: (context, index) {

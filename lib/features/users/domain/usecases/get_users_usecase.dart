@@ -6,7 +6,7 @@ class GetUsersUseCase {
 
   GetUsersUseCase(this.repository);
 
-  Future<List<User>> call() {
-    return repository.getUsers();
+  Future<List<User>> call(Map<String, dynamic>? params) {
+    return repository.getUsers(params);
   }
 }

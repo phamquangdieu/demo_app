@@ -17,8 +17,8 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<UserCubit>(create: (_) => sl<UserCubit>()..fetchUsers()),
-        BlocProvider<PostCubit>(create: (_) => sl<PostCubit>()..getPosts()),
+        BlocProvider<UserCubit>(create: (_) => sl<UserCubit>()),
+        BlocProvider<PostCubit>(create: (_) => sl<PostCubit>()),
       ],
       child: MaterialApp(
         title: 'Demo App',

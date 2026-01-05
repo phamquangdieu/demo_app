@@ -6,6 +6,9 @@ class DioClient {
       baseUrl: 'https://api.github.com',
       connectTimeout: Duration(milliseconds: 5000),
       receiveTimeout: Duration(milliseconds: 3000),
+      validateStatus: (status) {
+        return status != null && status >= 200 && status < 300;
+      },
     ),
   );
 

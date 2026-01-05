@@ -7,13 +7,30 @@ class UserCubit extends Cubit<UsersState> {
 
   UserCubit(this.getUsersUseCase) : super(UsersInitial());
 
-  Future<void> fetchUsers() async {
+  Future<void> fetchUsers(Map<String, dynamic> params) async {
     emit(UsersLoading());
     try {
-      final users = await getUsersUseCase();
-      emit(UsersLoaded(allUsers: users, filteredUsers: users));
+      if (params['q'] == null || (params['q'] as String).isEmpty) {
+        emit(UsersLoaded(allUsers: [], filteredUsers: [], searchQuery: ''));
+        return;
+      }
+      final users = await getUsersUseCase(params);
+      emit(
+        UsersLoaded(
+          allUsers: users,
+          filteredUsers: users,
+          searchQuery: params?['q'] ?? '',
+        ),
+      );
     } catch (e) {
-      emit(UsersError(e.toString()));
+      emit(
+        UsersLoaded(
+          allUsers: [],
+          filteredUsers: [],
+          searchQuery: params?['q'] ?? '',
+          errorMsg: e.toString(),
+        ),
+      );
     }
   }
 

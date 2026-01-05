@@ -15,15 +15,17 @@ class UsersLoaded extends UsersState {
   final List<User> allUsers;
   final List<User> filteredUsers;
   final String searchQuery;
+  final String? errorMsg;
 
   const UsersLoaded({
     required this.allUsers,
     required this.filteredUsers,
     this.searchQuery = '',
+    this.errorMsg = '',
   });
 
   @override
-  List<Object?> get props => [allUsers, filteredUsers, searchQuery];
+  List<Object?> get props => [allUsers, filteredUsers, searchQuery, errorMsg];
 }
 
 class UsersError extends UsersState {
@@ -39,11 +41,13 @@ extension UsersLoadedCopy on UsersLoaded {
     List<User>? allUsers,
     List<User>? filteredUsers,
     String? searchQuery,
+    String? errorMsg,
   }) {
     return UsersLoaded(
       allUsers: allUsers ?? this.allUsers,
       filteredUsers: filteredUsers ?? this.filteredUsers,
       searchQuery: searchQuery ?? this.searchQuery,
+      errorMsg: errorMsg ?? this.errorMsg,
     );
   }
 }

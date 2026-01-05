@@ -8,9 +8,8 @@ class UserRepositoryImpl implements UserRepository {
   UserRepositoryImpl(this.userRemoteDataSource);
 
   @override
-  Future<List<User>> getUsers() async {
-    final users = await userRemoteDataSource.getUsers();
-    print(users.length);
+  Future<List<User>> getUsers(Map<String, dynamic>? params) async {
+    final users = await userRemoteDataSource.getUsers(params);
     return users.map((model) => model.toEntity()).toList();
   }
 }
