@@ -9,45 +9,59 @@ abstract class UsersState extends Equatable {
 
 class UsersInitial extends UsersState {}
 
-class UsersLoading extends UsersState {}
+class UsersLoading extends UsersState {
+  final String searchQuery;
+  const UsersLoading({this.searchQuery = ''});
+  @override
+  List<Object?> get props => [searchQuery];
+}
 
 class UsersLoaded extends UsersState {
-  final List<User> allUsers;
-  final List<User> filteredUsers;
+  final List<User> users;
   final String searchQuery;
+  final int currentPage;
+  final bool hasReachedMax;
   final String? errorMsg;
 
   const UsersLoaded({
-    required this.allUsers,
-    required this.filteredUsers,
+    required this.users,
     this.searchQuery = '',
-    this.errorMsg = '',
+    this.currentPage = 1,
+    this.hasReachedMax = false,
+    this.errorMsg,
   });
 
   @override
-  List<Object?> get props => [allUsers, filteredUsers, searchQuery, errorMsg];
+  List<Object?> get props => [
+    users,
+    searchQuery,
+    currentPage,
+    hasReachedMax,
+    errorMsg,
+  ];
+
+  UsersLoaded copyWith({
+    List<User>? users,
+    String? searchQuery,
+    int? currentPage,
+    bool? hasReachedMax,
+    String? errorMsg,
+  }) {
+    return UsersLoaded(
+      users: users ?? this.users,
+      searchQuery: searchQuery ?? this.searchQuery,
+      currentPage: currentPage ?? this.currentPage,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      errorMsg: errorMsg,
+    );
+  }
 }
 
 class UsersError extends UsersState {
   final String message;
+  final String searchQuery;
 
-  const UsersError(this.message);
+  const UsersError(this.message, {this.searchQuery = ''});
   @override
-  List<Object?> get props => [message];
-}
-
-extension UsersLoadedCopy on UsersLoaded {
-  UsersLoaded copyWith({
-    List<User>? allUsers,
-    List<User>? filteredUsers,
-    String? searchQuery,
-    String? errorMsg,
-  }) {
-    return UsersLoaded(
-      allUsers: allUsers ?? this.allUsers,
-      filteredUsers: filteredUsers ?? this.filteredUsers,
-      searchQuery: searchQuery ?? this.searchQuery,
-      errorMsg: errorMsg ?? this.errorMsg,
-    );
-  }
+  List<Object?> get props => [message, searchQuery];
 }
